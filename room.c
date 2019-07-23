@@ -85,7 +85,6 @@ void render(struct Video *vid, char gradient[], struct Room room)
         v.x = (cos(rot.z) * (v_ref).x) + (-sin(rot.z) * (v_ref).y);
         v.y = (sin(rot.z) * (v_ref).x) + (cos(rot.z) * (v_ref).y) ;
 
-
         //translate
         //translation
         const struct Vec tra = (*body).t;

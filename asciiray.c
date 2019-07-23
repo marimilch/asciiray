@@ -4,6 +4,10 @@
 #include"video.c"
 #include"room.c"
 
+#define ROOM_SIZE 300
+
+typedef char byte;
+
 int main(int argc, char *argv[])
 {
     int x = 80;
@@ -62,26 +66,35 @@ int main(int argc, char *argv[])
             10.0
         },
 
-        5.0
+        6.0
     };
 
-    //printf("gradient has length: %d", get_str_len(gradient))
-    //char input = NO_KEY;
+    byte xd = 5;
+    byte yd = 5;
+    byte zd = 5;
+
     for(int i = -1000; i < 1000; ++i){
         //room.rot_x = i/10.0;
         room.body.rot.y = ((i/100.0)*PI);
         room.body.rot.x = ((i/200.0)*PI);
         room.body.rot.z = ((i/400.0)*PI);
 
-        //room.body.t.x = (double) i;
+        room.body.t.y += xd;
+        room.body.t.x += yd;
+        room.body.t.z += zd;
 
-        // room.t_x = sin(i/12.0) + x/2;
-        // room.t_y = cos(i/15.0) + y/2;
-        // room.t_z = sin(i/17.0);
+        if (room.body.t.x >= ROOM_SIZE || room.body.t.x <= -ROOM_SIZE){
+            xd *= -1;
+        }
 
-        // room.f = i;
+        if (room.body.t.y >= ROOM_SIZE || room.body.t.y <= -ROOM_SIZE){
+            yd *= -1;
+        }
 
-        //input = get_input();
+        if (room.body.t.z >= ROOM_SIZE || room.body.t.z <= -ROOM_SIZE){
+            zd *= -1;
+        }
+
         render(&vid, gradient, room);
         text("I M A G I C U B E", 10, 2, &vid);
 
