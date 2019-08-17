@@ -8,17 +8,25 @@ struct Vec
     double z;
 };
 
-struct Trigone
+struct Size
 {
-    struct Vec v1;
-    struct Vec v2;
-    struct Vec v3;
+    int x_size;
+    int y_size;
+    int z_size;
 };
 
 struct VecArr
 {
     int count;
-    struct Vec vecs[8];
+
+    //C-Array
+    struct Vec *vecs;
+};
+
+struct VoxMap
+{
+    struct Size size;
+    char *voxels;
 };
 
 struct Coord
@@ -35,25 +43,9 @@ struct Rot
     double z;
 };
 
-struct Shape
+struct VoxSprite
 {
-    //scale
-    double s;
-
-    //rotation
-    struct Rot r;
-
-    //center
-    struct Vec c;
-
-    //translation
-    struct Vec t;
-    struct Trigone *tris;
-};
-
-struct Body
-{
-    struct VecArr vecs;
+    struct VoxMap vm;
 
     //center
     struct Vec c;
@@ -70,7 +62,7 @@ struct Body
 
 struct Room
 {
-    struct Body body;
+    struct VoxSprite *vs;
 
     //optical center
     struct Coord h;

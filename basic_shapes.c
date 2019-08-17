@@ -1,47 +1,55 @@
 #ifndef BASIC_SHAPES_C
 #define BASIC_SHAPES_C
 
+#include<stdbool.h>
+#include<stdlib.h>
 #include"room_obj.c"
 
-struct Shape cube(){
-    struct Trigone *t = malloc(12*sizeof(struct Trigone));
+// probably laziest way to create cube voxels, lol 
+struct VoxSprite cube(int cube_length){
+    struct VoxMap vm;
 
-    struct Vec ful = {0,0,0};
-    struct Vec fur = {0,1,0};
-    struct Vec fdl = {1,0,0};
-    struct Vec fdr = {1,1,0};
+    vm.size.x_size = cube_length;
+    vm.size.y_size = cube_length;
+    vm.size.z_size = cube_length;
 
-    struct Vec bul = {0,0,1};
-    struct Vec bur = {0,1,1};
-    struct Vec bdl = {1,0,1};
-    struct Vec bdr = {1,1,1};
+    //DONT FORGET TO FREE ME!!!!!1!1!1!!111
+    vm.voxels = malloc(cube_length*cube_length*cube_length*sizeof(char));
+ 
+    for (int i = 0; i < cube_length; ++i)
+    {
+        for (int j = 0; j < cube_length; ++j)
+        {
+            for (int k = 0; k < cube_length; ++k)
+            {
+                bool is_cube_point = 
+                    i == 0 || i == cube_length || 
+                    j == 0 || j == cube_length || 
+                    k == 0 || k == cube_length
+                ;
+                if (is_cube_point){
+                    int pos = cube_length*cube_length*i + cube_length*j + k;
+                    vm.voxels[pos]= 'X';
+                }
+            }
+        }
+    }
 
-    //front
-    t[0] = {ful, fur, fdl};
-    t[1] = {fdl, fdr, fur};
+    struct VoxSprite vs = {
+        {{0,0,0},NULL},
+        {0.0,0.0,0.0},
+        1,
+        {0.0,0.0,0.0},
+        {0.0,0.0,0.0}
+    };
 
-    //left
-    t[2] = {ful, bul, bdl};
-    t[3] = {ful, fdl, bdl};
+    vs.vm = vm;
 
-    //right
-    t[4] = {fur, fdr, bur};
-    t[5] = {bdr, fdr, bur};
+    vs.c.x = ((double) cube_length)/2;
+    vs.c.y = ((double) cube_length)/2;
+    vs.c.z = ((double) cube_length)/2;
 
-    //top
-    t[6] = {ful, bul, fur};
-    t[7] = {bur, bul, fur};
-
-    //bottom
-    t[8] = {fdl, bdl, fdr};
-    t[9] = {bdr, bdl, fdr};
-
-    //back
-    t[10] = {bul, bur, bdl};
-    t[11] = {bdl, bdr, bur};
-
-    struct Shape s;
-    return s;
+    return vs;
 }
 
 #endif

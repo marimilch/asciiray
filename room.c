@@ -12,6 +12,8 @@
 
 #define PI 3.14159265358979323846
 
+#define EMPTY_SPACE ' '
+
 //number of "pixels" per unit in u/v direction
 #define MU 2
 #define MV 1
@@ -42,64 +44,73 @@ void render(struct Video *vid, char gradient[], struct Room room)
     //draw emptiness first
     for (int i = 0; i < x * y; ++i)
     {
-        vid->map[i] = '.';
+        vid->map[i] = EMPTY_SPACE;
     }
 
-    struct Body *body = &(room.body);
+    struct VoxSprite *vs = room.vs;
 
-    //get 2d-coordinate for each vector and draw directly (ignoring overlap for now)
-    for (int i = 0; i < (*body).vecs.count; ++i)
+    //draw xz-plane (implicitly)
+
+    //draw each voxel of sprite (ignore overlap for now)
+    for (int i = 0; i < vs->vm.size.x_size; ++i)
     {
+        for (int j = 0; j < vs->vm.size.y_size; ++j)
+        {
+            for (int k = 0; k < vs->vm.size.z_size; ++k)
+            {
+                //to be transformed vec (non-homogenous)
+                struct Vec v;
 
-        //transformed vec (non-homogenous)
-        struct Vec v = (*body).vecs.vecs[i];
+                //set center
+                v.x = vs->c.x + i;
+                v.y = vs->c.y + j;
+                v.z = vs->c.z + k;
 
-        //set center
-        v.x += (*body).c.x;
-        v.y += (*body).c.y;
-        v.z += (*body).c.z;
+                //scale 
+                v.x *= vs->s;
+                v.y *= vs->s;
+                v.z *= vs->s;
 
-        //scale 
-        v.x *= (*body).s;
-        v.y *= (*body).s;
-        v.z *= (*body).s;
+                //transformed reference values for rotation (will be updated after each coordinate)
+                struct Vec v_ref = v;
 
-        //transformed reference values for rotation (will be updated after each coordinate)
-        struct Vec v_ref = v;
+                //rotation self
+                const struct Rot rot = vs->rot;
 
-        //rotation self
-        const struct Rot rot = (*body).rot;
+                //rotate
+                //x-rotation
+                v.y = (cos(rot.x) * (v_ref).y) + (-sin(rot.x) * (v_ref).z);
+                v.z = (sin(rot.x) * (v_ref).y) + (cos(rot.x) * (v_ref).z) ;
+                v_ref = v;
 
-        //rotate
-        //x-rotation
-        v.y = (cos(rot.x) * (v_ref).y) + (-sin(rot.x) * (v_ref).z);
-        v.z = (sin(rot.x) * (v_ref).y) + (cos(rot.x) * (v_ref).z) ;
-        v_ref = v;
+                //y-rotation
+                v.x = (cos(rot.y) * (v_ref).x) + (sin(rot.y) * (v_ref).z);
+                v.z = (-sin(rot.y) * (v_ref).x) + (cos(rot.y) * (v_ref).z) ;
+                v_ref = v;
 
-        //y-rotation
-        v.x = (cos(rot.y) * (v_ref).x) + (sin(rot.y) * (v_ref).z);
-        v.z = (-sin(rot.y) * (v_ref).x) + (cos(rot.y) * (v_ref).z) ;
-        v_ref = v;
+                //z-rotation
+                v.x = (cos(rot.z) * (v_ref).x) + (-sin(rot.z) * (v_ref).y);
+                v.y = (sin(rot.z) * (v_ref).x) + (cos(rot.z) * (v_ref).y) ;
 
-        //z-rotation
-        v.x = (cos(rot.z) * (v_ref).x) + (-sin(rot.z) * (v_ref).y);
-        v.y = (sin(rot.z) * (v_ref).x) + (cos(rot.z) * (v_ref).y) ;
+                //translate
+                //translation
+                const struct Vec tra = vs->t;
 
-        //translate
-        //translation
-        const struct Vec tra = (*body).t;
+                v.x += tra.x;
+                v.y += tra.y;
+                v.z += tra.z;
 
-        v.x += tra.x;
-        v.y += tra.y;
-        v.z += tra.z;
+                struct Coord c = planar(v, room.h, room.f);
+                int cx = (int) c.x;
+                int cy = (int) c.y;
 
-        struct Coord c = planar(v, room.h, room.f);
-        int cx = (int) c.x;
-        int cy = (int) c.y;
-
-        //catch out of sight coordinates
-        if(cx >= 0 && cy>=0 && cx < x && cy < y)
-            vid->map[cy * x + cx] = 'x';
+                //catch out of sight coordinates and if not already drawn
+                if(cx >= 0 && cy>=0 && cx < x && cy < y && vid->map[cy * x + cx] == EMPTY_SPACE){
+                    int pos = k * vs->vm.size.y_size * vs->vm.size.x_size  +  j * vs->vm.size.x_size +  i;
+                    vid->map[cy * x + cx] = vs->vm.voxels[pos];
+                }
+            }
+        }
     }
 }
 
