@@ -23,9 +23,9 @@ struct VoxSprite cube(int cube_length){
             for (int k = 0; k < cube_length; ++k)
             {
                 bool is_cube_point = 
-                    i == 0 || i == cube_length || 
-                    j == 0 || j == cube_length || 
-                    k == 0 || k == cube_length
+                    i == 0 || i == cube_length-1 || 
+                    j == 0 || j == cube_length-1 || 
+                    k == 0 || k == cube_length-1
                 ;
                 if (is_cube_point){
                     int pos = cube_length*cube_length*i + cube_length*j + k;

@@ -54,6 +54,7 @@ void render(struct Video *vid, char gradient[], struct Room room)
     //draw each voxel of sprite (ignore overlap for now)
     for (int i = 0; i < vs->vm.size.x_size; ++i)
     {
+        //printf("reached loop\n");
         for (int j = 0; j < vs->vm.size.y_size; ++j)
         {
             for (int k = 0; k < vs->vm.size.z_size; ++k)
@@ -62,9 +63,9 @@ void render(struct Video *vid, char gradient[], struct Room room)
                 struct Vec v;
 
                 //set center
-                v.x = vs->c.x + i;
-                v.y = vs->c.y + j;
-                v.z = vs->c.z + k;
+                v.x = -vs->c.x + (double)i;
+                v.y = -vs->c.y + (double)j;
+                v.z = -vs->c.z + (double)k;
 
                 //scale 
                 v.x *= vs->s;
@@ -104,11 +105,31 @@ void render(struct Video *vid, char gradient[], struct Room room)
                 int cx = (int) c.x;
                 int cy = (int) c.y;
 
-                //catch out of sight coordinates and if not already drawn
+                // if( i == 0 && j == 0 && k == 0){
+                //     //debug info
+
+                //     printf("first point at (%f,%f,%f)\n", v.x, v.y, v.z);
+                // }
+
+                //catch out of sight coordinates and if not already drawn vs->vm.voxels[pos]
                 if(cx >= 0 && cy>=0 && cx < x && cy < y && vid->map[cy * x + cx] == EMPTY_SPACE){
                     int pos = k * vs->vm.size.y_size * vs->vm.size.x_size  +  j * vs->vm.size.x_size +  i;
-                    vid->map[cy * x + cx] = vs->vm.voxels[pos];
-                }
+                    vid->map[cy * x + cx] = 'X';
+                } 
+                // else {
+                //     if (cx < 0){
+                //         text("<-", 4, y/2, vid);
+                //     } 
+                //     if (cy < 0){
+                //         text("/\\", x/2, 4, vid);
+                //     } 
+                //     if (cx >= x){
+                //         text("->", x-5, y/2, vid);
+                //     } 
+                //     if (cy >= y){
+                //         text("\\/", x/2, y-5, vid);
+                //     }
+                // }
             }
         }
     }

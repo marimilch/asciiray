@@ -16,13 +16,27 @@ struct Video
     char *map;
 };
 
+int get_str_len(char str[]){
+    int g_len = 0;
+    for (int i = 0; str[i] != '\0'; ++i)
+    {
+        ++g_len;
+    }
+    return g_len;
+}
+
 void text(char *text, int x_pos, int y_pos, struct Video *v){
     int x = v->x;
     int y = v->y;
 
     for (int i = 0; i < x && text[i] != '\0'; ++i)
     {
-        v->map[y_pos*x + x_pos + i] = text[i];
+        //assume given coordinate is supposed to be center of text
+        int pos = y_pos*x + x_pos + i - get_str_len(text)/2;
+
+        //catch out of bounds
+        if (pos >= 0 || pos < x*y)
+            v->map[pos] = text[i];
     }
 }
 

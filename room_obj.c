@@ -3,9 +3,9 @@
 
 struct Vec 
 {
-    double x;
-    double y;
-    double z;
+    double x; //to right
+    double y; //to bottom
+    double z; //to back
 };
 
 struct Size
