@@ -7,8 +7,9 @@ and press Enter.
 
 ## Usage
 In your console, type
-```./asciiray```
+```./asciiray width height```
 and press Enter.
+160 and 40 is recommended due to least artifacts.
 
 Enjoy the little demo :).
 
