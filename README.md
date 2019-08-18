@@ -2,7 +2,7 @@
 
 ## How to build
 In your console, type
-```gcc asciiray.c -o asciiray```
+```cc asciiray.c -o asciiray```
 and press Enter.
 
 ## Usage
