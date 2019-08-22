@@ -6,7 +6,7 @@
 #include"room_obj.c"
 
 // probably laziest way to create cube voxels, lol 
-struct VoxSprite cube(int cube_length){
+struct VoxSprite cube(int cube_length, bool rounded){
     struct VoxMap vm;
 
     vm.size.x_size = cube_length;
@@ -22,14 +22,33 @@ struct VoxSprite cube(int cube_length){
         {
             for (int k = 0; k < cube_length; ++k)
             {
-                bool is_cube_point = 
-                    i == 0 || i == cube_length-1 || 
-                    j == 0 || j == cube_length-1 || 
-                    k == 0 || k == cube_length-1
-                ;
-                if (is_cube_point){
-                    int pos = cube_length*cube_length*i + cube_length*j + k;
-                    vm.voxels[pos]= 'X';
+                int pos = cube_length*cube_length*i + cube_length*j + k;
+                if (i == 0 || i == cube_length-1)
+                {
+                    vm.voxels[pos]= 0.33;
+                }
+                else if (j == 0 || j == cube_length-1)
+                {                    
+                    vm.voxels[pos]= 0.67;
+                }
+                else if (k == 0 || k == cube_length-1)
+                {
+                    vm.voxels[pos]= 1.0;
+                }
+                else 
+                {
+                    vm.voxels[pos]= -1.0;
+                }
+
+                //no corners and edges with smooth corners (double if for better readability)
+                if (rounded){
+                    int dcl = 2 * cube_length - 2;
+                    if ( 
+                        i+j == 0 || j+k == 0 || i+k == 0 || 
+                        i+j == dcl || j+k == dcl || i+j == dcl
+                    ) {
+                        vm.voxels[pos]= -1.0;
+                    }
                 }
             }
         }

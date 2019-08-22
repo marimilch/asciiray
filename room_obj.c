@@ -26,7 +26,8 @@ struct VecArr
 struct VoxMap
 {
     struct Size size;
-    char *voxels;
+    //doubles represent brightness level
+    double *voxels;
 };
 
 struct Coord
@@ -69,6 +70,9 @@ struct Room
 
     //focal length of the lense
     double f;
+
+    //render distance (for distance dependent brightness)
+    double rd;
 };
 
 #endif

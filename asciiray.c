@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     char *video = malloc( x*y*sizeof(char) );
     vid.map = video;
 
-    char gradient[] = " .+x#$";
+    char gradient[] = ".:+xX#W";
 
     //prepare room and its sprites
     struct VoxSprite *vs = malloc(sizeof(struct VoxSprite));
@@ -42,16 +42,20 @@ int main(int argc, char *argv[])
     //distance cube mid point + focal length
     double cf = cd + FOCAL_LENGTH;
 
-    *vs = cube(cube_size); 
+    double room_depth = 1.5 * (sqrt(3*room_width*room_height) + cf);
+
+    *vs = cube(cube_size, true); 
     vs->t.x = 0.0;
     vs->t.y = 0.0;
-    vs->t.z = room_width + cf;
+    vs->t.z = room_depth / 2.0;
 
     struct Room room;
     room.vs = vs;
     room.h.x = x/4;
     room.h.y = y/2;
     room.f = FOCAL_LENGTH;
+    //render to the end of the room
+    room.rd = room_depth;
 
     double xd = -0.5;
     double yd = -0.6;
@@ -75,7 +79,7 @@ int main(int argc, char *argv[])
             yd *= -1;
         }
 
-        if ( room.vs->t.z >= cf + sqrt(3*room_width*room_height) || room.vs->t.z < cf){
+        if ( room.vs->t.z + cf >= room_depth || room.vs->t.z < cf){
             zd *= -1;
         }
 

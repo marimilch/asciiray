@@ -12,8 +12,6 @@
 
 #define PI 3.14159265358979323846
 
-#define EMPTY_SPACE ' '
-
 //number of "pixels" per unit in u/v direction
 #define MU 2
 #define MV 1
@@ -36,29 +34,52 @@ double scalar (struct Vec vec1, struct Vec vec2)
     return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
 }
 
+double *create_z_map(int length)
+{
+    //remember to free me
+    double *z_map = malloc(sizeof(double)*length);
+    for (int i = 0; i < length; ++i)
+    {
+        z_map[i] = -1.0;
+    }
+
+    return z_map;
+}
+
+//should have given room as a pointer but whatevs, it's just a little demo
 void render(struct Video *vid, char gradient[], struct Room room)
 {
     int x = vid->x;
     int y = vid->y;
 
-    //draw emptiness first
-    for (int i = 0; i < x * y; ++i)
-    {
-        vid->map[i] = EMPTY_SPACE;
-    }
+    //holds the z-vals of the planared voxel
+    double *z_map = create_z_map(x*y);
+
+    //brightness-map of points (just a map of distances multiplied with the brightness value of an object)
+    double *brightness_map = create_z_map(x*y);
 
     struct VoxSprite *vs = room.vs;
 
     //draw xz-plane (implicitly)
 
-    //draw each voxel of sprite (ignore overlap for now)
+    //write z-coordinate on position, where the planared voxel will be
     for (int i = 0; i < vs->vm.size.x_size; ++i)
     {
-        //printf("reached loop\n");
         for (int j = 0; j < vs->vm.size.y_size; ++j)
         {
             for (int k = 0; k < vs->vm.size.z_size; ++k)
             {
+                //extra variable for a little better readability
+                int voxel_index = k * vs->vm.size.y_size * vs->vm.size.x_size  +  j * vs->vm.size.x_size + i;
+
+                //get the brightness level of planared voxel
+                double voxel_brightness = vs->vm.voxels[voxel_index];
+
+                //if negative, assume nothingness, so skippable
+                if (voxel_brightness < 0.0){
+                    continue;
+                }
+
                 //to be transformed vec (non-homogenous)
                 struct Vec v;
 
@@ -111,10 +132,15 @@ void render(struct Video *vid, char gradient[], struct Room room)
                 //     printf("first point at (%f,%f,%f)\n", v.x, v.y, v.z);
                 // }
 
-                //catch out of sight coordinates and if not already drawn vs->vm.voxels[pos]
-                if(cx >= 0 && cy>=0 && cx < x && cy < y && vid->map[cy * x + cx] == EMPTY_SPACE){
-                    int pos = k * vs->vm.size.y_size * vs->vm.size.x_size  +  j * vs->vm.size.x_size +  i;
-                    vid->map[cy * x + cx] = 'X';
+                //catch out of sight coordinates and if old value not nearer than new one
+                //exception -> if negative, it means nothing is there right now
+                if(cx >= 0 && cy>=0 && cx < x && cy < y){
+                    int pos = cy * x + cx;
+                    double *saved_z_val = &z_map[pos];
+                    if( v.z < *saved_z_val || *saved_z_val < 0.0){
+                        *saved_z_val = v.z;
+                        brightness_map[pos] = (voxel_brightness * ( room.rd - (v.z - room.f) ))/room.rd;
+                    }
                 } 
                 // else {
                 //     if (cx < 0){
@@ -133,6 +159,9 @@ void render(struct Video *vid, char gradient[], struct Room room)
             }
         }
     }
+    free(z_map);
+    render_brightness_map(vid, brightness_map, gradient);
+    free(brightness_map);
 }
 
 #endif

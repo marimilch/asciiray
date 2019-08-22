@@ -9,6 +9,8 @@
 
 #define clear() printf("\033[H\033[J")
 
+#define EMPTY_SPACE ' '
+
 struct Video
 {
     int x;
@@ -23,6 +25,46 @@ int get_str_len(char str[]){
         ++g_len;
     }
     return g_len;
+}
+
+void render_brightness_map(struct Video *vid, double *z_map, char gradient[]){
+    //get gradient length
+    int g_len = get_str_len(gradient);
+
+    //map length
+    int len = vid->x * vid->y;
+
+    //draw emptiness first
+    for (int i = 0; i < len; ++i)
+    {
+        vid->map[i] = EMPTY_SPACE;
+    }
+
+    //the further away, the darker the char
+    for (int i = 0; i < len; ++i)
+    {
+        if (z_map[i] < 0.0 || z_map[i] > 1.0){
+            continue;
+        }
+
+        double val = z_map[i];
+        
+        // double division casted to integer on purpose
+        // integerized brightness sets index on the gradient
+        int g_pos = val * g_len;
+
+        //just in case, it is out of bounds for whatever reason (seems to happen)
+        if(g_pos<0)
+        {
+            g_pos = 0;
+        } 
+        else if(g_pos>=g_len)
+        {
+            g_pos = g_len-1;
+        }
+
+        vid->map[i] = gradient[g_pos];
+    }
 }
 
 void text(char *text, int x_pos, int y_pos, struct Video *v){
