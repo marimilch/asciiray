@@ -1,6 +1,8 @@
 #ifndef ROOM_OBJ_C
 #define ROOM_OBJ_C
 
+#define VOX_DENSITY 1.0 //how many voxels per unit, the higher, the densier the voxels
+
 struct Vec 
 {
     double x; //to right

@@ -84,9 +84,9 @@ void render(struct Video *vid, char gradient[], struct Room room)
                 struct Vec v;
 
                 //set center
-                v.x = -vs->c.x + (double)i;
-                v.y = -vs->c.y + (double)j;
-                v.z = -vs->c.z + (double)k;
+                v.x = -vs->c.x + (double)i * 1.0/VOX_DENSITY;
+                v.y = -vs->c.y + (double)j * 1.0/VOX_DENSITY;
+                v.z = -vs->c.z + (double)k * 1.0/VOX_DENSITY;
 
                 //scale 
                 v.x *= vs->s;

@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     //prepare room and its sprites
     struct VoxSprite *vs = malloc(sizeof(struct VoxSprite));
 
-    int cube_size = x/8;
+    int cube_size = x/8 * VOX_DENSITY;
 
     //distance midpoint to corner of cube
     double cd = sqrt((double)3*cube_size*cube_size/4);
