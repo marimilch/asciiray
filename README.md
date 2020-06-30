@@ -9,7 +9,8 @@ and press Enter.
 In your console, type
 ```./asciiray width height```
 and press Enter.
-160 and 40 is recommended due to least artifacts.
+~~160 and 40 is recommended due to least artifacts.~~
+The tearing bug has been fixed and any size should work. :)
 
 Enjoy the little demo :).
 
