@@ -14,7 +14,7 @@ struct VoxSprite cube(int cube_length, bool rounded){
     vm.size.z_size = cube_length;
 
     //DONT FORGET TO FREE ME!!!!!1!1!1!!111
-    vm.voxels = malloc(cube_length*cube_length*cube_length*sizeof(char));
+    vm.voxels = malloc(cube_length*cube_length*cube_length*sizeof(double));
  
     for (int i = 0; i < cube_length; ++i)
     {

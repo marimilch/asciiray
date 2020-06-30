@@ -77,7 +77,7 @@ void text(char *text, int x_pos, int y_pos, struct Video *v){
         int pos = y_pos*x + x_pos + i - get_str_len(text)/2;
 
         //catch out of bounds
-        if (pos >= 0 || pos < x*y)
+        if (pos >= 0 && pos < x*y)
             v->map[pos] = text[i];
     }
 }
@@ -87,7 +87,7 @@ void print(struct Video *v)
     int x = v->x;
     int y = v->y;
 
-    char *vid_string = malloc( ((v->x+1)*v->y+1)*sizeof(double) );
+    char *vid_string = malloc( ((v->x+1)*v->y+1)*sizeof(char) );
     for (int i = 0; i < y; ++i)
     {
 
