@@ -1,8 +1,11 @@
 # ASCIIRay
 
-[See a preview here](https://marimilch.de/projects#ascii-cube)
+## Preview
+
+https://user-images.githubusercontent.com/52521188/156248341-7c7d56b5-90aa-4d8a-95f4-957db98acce5.mp4
 
 ## How to build
+
 In your console, type
 ```cc asciiray.c -o asciiray```
 and press Enter. It does not depend on any library. :)
